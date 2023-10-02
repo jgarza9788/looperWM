@@ -3,13 +3,12 @@ looperWM 🔃
 
 Loop Through Windows with **Win+PageUp** and **Win+PageDown**
 
-![GIF](.\misc\demo_20231002_text.gif)
-
+<img src=".\misc\demo_20231002_text.gif" alt="drawing" style="width:420px;"/>
 
 # Set Up
 1. install python
 2. use `pip install -r requirements.txt`
-3. use 'python main.py'
+3. use `python main.py`
 4. use **Win+PageUp** and **Win+PageDown** to loop through windows.
 
 
