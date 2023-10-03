@@ -41,17 +41,19 @@ def cb_for_wl(hwnd, win_list):
             print('Docked Window:',title)
             win32gui.BringWindowToTop(hwnd)
             win32gui.SetActiveWindow(hwnd)
-            pyautogui.press('win')
-            time.sleep(0.25)
-            pyautogui.press('left')
+            pyautogui.hotkey('win', 'left')
+            # pyautogui.press('winleft')
+            # time.sleep(0.25)
+            # pyautogui.press('left')
 
         if y < 0:
             print('Max Window:',title)
             win32gui.BringWindowToTop(hwnd)
             win32gui.SetActiveWindow(hwnd)
-            pyautogui.press('win')
-            time.sleep(0.25)
-            pyautogui.press('down')
+            pyautogui.hotkey('win', 'down')
+            # pyautogui.press('win')
+            # time.sleep(0.25)
+            # pyautogui.press('down')
 
         # if (x+y) != 0 and (x+y) != -64000 and len(title) > 0:
         #     print(hwnd)
@@ -75,35 +77,50 @@ def move_windows(wl):
         print('moving:',w)
         if index == 0 :
             move_window(w['id'],0,0,monitors[0].width - 800, monitors[0].height)
-            win32gui.BringWindowToTop(w['id'])
-            win32gui.SetActiveWindow(w['id'])
         else:
             h = monitors[0].height//len(wl)
             move_window(w['id'],monitors[0].width - 800,(h*(len(wl) - index-1)),800,h)
+    
+    # win32gui.BringWindowToTop(wl[0]['id'])
+    # win32gui.SetActiveWindow(wl[0]['id'])
+    # win32gui.SetForegroundWindow(wl[0]['id'])
+
+
+    # win32gui.SetForegroundWindow(wl[0]['id'])
 
 
 def rotDown():
-    global win_list
-    # if event.event_type == keyboard.KEY_DOWN:
-    print('rotDown')
-    win_list = win_list[1:] + [win_list[0]]
-    move_windows(win_list)
+    try:
+        global win_list
+        # if event.event_type == keyboard.KEY_DOWN:
+        print('rotDown')
+        win_list = win_list[1:] + [win_list[0]]
+        move_windows(win_list)
+        win32gui.SetForegroundWindow(win_list[0]['id'])
+    except:
+        pass
 
 def rotUp():
-    global win_list
-    # if event.event_type == keyboard.KEY_DOWN:
-    print('rotUp')
-    win_list = [win_list[-1]] + win_list[:-1]
-    move_windows(win_list)
+    try:
+        global win_list
+        # if event.event_type == keyboard.KEY_DOWN:
+        print('rotUp')
+        win_list = [win_list[-1]] + win_list[:-1]
+        move_windows(win_list)
+        win32gui.SetForegroundWindow(win_list[0]['id'])
+    except:
+        pass
 
 def main():
     global win_list
     global hotkey_up
     global hotkey_down
     win_list = get_win_list()
-    print(len(win_list))
+    # print(len(win_list))
     print(*win_list,sep='\n')
-    print(*get_win_list(),sep='\n')
+    # print(*get_win_list(),sep='\n')
+
+    
 
     keyboard.add_hotkey(hotkey_down, callback=rotDown)
     keyboard.add_hotkey(hotkey_up, callback=rotUp)
