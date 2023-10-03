@@ -81,39 +81,37 @@ def move_windows(wl):
             h = monitors[0].height//len(wl)
             move_window(w['id'],monitors[0].width - 800,(h*(len(wl) - index-1)),800,h)
     
-    # win32gui.BringWindowToTop(wl[0]['id'])
-    # win32gui.SetActiveWindow(wl[0]['id'])
-    # win32gui.SetForegroundWindow(wl[0]['id'])
-
-
-    # win32gui.SetForegroundWindow(wl[0]['id'])
-
+def setFocus(id):
+    focused = False
+    error_count = 0 
+    while focused == False:
+        try:
+            win32gui.SetForegroundWindow(win_list[0]['id'])
+            focused = True
+            print('errors',error_count)
+        except:
+            error_count += 1
+            time.sleep(0.1)
 
 def rotDown():
-    try:
-        global win_list
-        # if event.event_type == keyboard.KEY_DOWN:
-        print('rotDown')
-        win_list = win_list[1:] + [win_list[0]]
-        move_windows(win_list)
-        time.sleep(0.5)
-        win32gui.SetForegroundWindow(win_list[0]['id'])
-    except Exception as e:
-        print(str(e))
-        pass
+    global win_list
+    # if event.event_type == keyboard.KEY_DOWN:
+    print('rotDown')
+    win_list = win_list[1:] + [win_list[0]]
+    move_windows(win_list)
+
+    setFocus(win_list[0]['id'])
+
 
 def rotUp():
-    try:
-        global win_list
-        # if event.event_type == keyboard.KEY_DOWN:
-        print('rotUp')
-        win_list = [win_list[-1]] + win_list[:-1]
-        move_windows(win_list)
-        time.sleep(0.5)
-        win32gui.SetForegroundWindow(win_list[0]['id'])
-    except Exception as e:
-        print(str(e))
-        pass
+    global win_list
+    # if event.event_type == keyboard.KEY_DOWN:
+    print('rotUp')
+    win_list = [win_list[-1]] + win_list[:-1]
+    move_windows(win_list)
+
+    setFocus(win_list[0]['id'])
+            
 
 def main():
     global win_list
