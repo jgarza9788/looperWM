@@ -15,7 +15,7 @@ Loop Through Windows with **Win+PageUp** and **Win+PageDown**
 # unknown issues.
 * no animation - and maybe never
 * issues with windows docked on the side, or full screen
-* should focus on the main window after hotkey
+~~* should focus on the main window after hotkey~~ maybe fixed
 * should automatically detect new windows
 * add a settings.json (or maybe config.json)
 * polish the script and stuff?
