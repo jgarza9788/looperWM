@@ -96,8 +96,10 @@ def rotDown():
         print('rotDown')
         win_list = win_list[1:] + [win_list[0]]
         move_windows(win_list)
+        time.sleep(0.5)
         win32gui.SetForegroundWindow(win_list[0]['id'])
-    except:
+    except Exception as e:
+        print(str(e))
         pass
 
 def rotUp():
@@ -107,8 +109,10 @@ def rotUp():
         print('rotUp')
         win_list = [win_list[-1]] + win_list[:-1]
         move_windows(win_list)
+        time.sleep(0.5)
         win32gui.SetForegroundWindow(win_list[0]['id'])
-    except:
+    except Exception as e:
+        print(str(e))
         pass
 
 def main():
