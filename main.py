@@ -74,12 +74,16 @@ def move_window(hwnd, x, y, w, h):
 def move_windows(wl):
     for index,w in enumerate(wl):
         # time.sleep(0.1)
-        print('moving:',w)
+        print('moving: ',index,w)
         if index == 0 :
             move_window(w['id'],0,0,monitors[0].width - 800, monitors[0].height)
         else:
+            xindex = len(wl) - index
             h = monitors[0].height//len(wl)
-            move_window(w['id'],monitors[0].width - 800,(h*(len(wl) - index-1)),800,h)
+            # h = monitors[0].height
+            # y = 100
+            y = h
+            move_window(wl[xindex]['id'],monitors[0].width - 800,(y*(index-1)),800,h)
     
 def setFocus(id):
     focused = False
@@ -93,8 +97,23 @@ def setFocus(id):
             error_count += 1
             time.sleep(0.1)
 
+def find_new_windows(wl):
+    nwl = get_win_list()
+
+    wtitles = [w['title'] for w in wl]
+
+    for w in nwl:
+        if w['title'] in wtitles:
+            pass # do nothing
+        else:
+            wl.insert(0,w)
+    
+    return wl
+
+
 def rotDown():
     global win_list
+    win_list = find_new_windows(win_list)
     # if event.event_type == keyboard.KEY_DOWN:
     print('rotDown')
     win_list = win_list[1:] + [win_list[0]]
@@ -105,6 +124,7 @@ def rotDown():
 
 def rotUp():
     global win_list
+    win_list = find_new_windows(win_list)
     # if event.event_type == keyboard.KEY_DOWN:
     print('rotUp')
     win_list = [win_list[-1]] + win_list[:-1]
