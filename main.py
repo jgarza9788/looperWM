@@ -17,7 +17,8 @@ excluded_windows = [
     'Windows Input Experience',
     'MainWindow',
     'NVIDIA GeForce Overlay',
-    'Program Manager'
+    'Program Manager',
+    'Windows Shell Experience Host'
 ]
 
 def cb_for_wl(hwnd, win_list):
@@ -30,30 +31,31 @@ def cb_for_wl(hwnd, win_list):
 
         title = win32gui.GetWindowText(hwnd)
 
-        print("Window:" ,title)
-        print("\tLocation: (%d, %d)" % (x, y))
-        print("\t    Size: (%d, %d)" % (w, h))
+        # print("Window:" ,title)
+        # print("\tLocation: (%d, %d)" % (x, y))
+        # print("\t    Size: (%d, %d)" % (w, h))
 
         if len(title) > 0 and title not in excluded_windows:
-            win_list.append({'id': hwnd,'title':title,'x':x,'y':y,'w':w,'h':h})
+            if (x+y) != -64000:
+                win_list.append({'id': hwnd,'title':title,'x':x,'y':y,'w':w,'h':h})
 
-        if rect[0] < 0 and rect[2] > 0:
-            print('Docked Window:',title)
-            win32gui.BringWindowToTop(hwnd)
-            win32gui.SetActiveWindow(hwnd)
-            pyautogui.hotkey('win', 'left')
-            # pyautogui.press('winleft')
-            # time.sleep(0.25)
-            # pyautogui.press('left')
+        # if rect[0] < 0 and rect[2] > 0:
+        #     print('Docked Window:',title)
+        #     win32gui.BringWindowToTop(hwnd)
+        #     win32gui.SetActiveWindow(hwnd)
+        #     pyautogui.hotkey('win', 'left')
+        #     # pyautogui.press('winleft')
+        #     # time.sleep(0.25)
+        #     # pyautogui.press('left')
 
-        if y < 0:
-            print('Max Window:',title)
-            win32gui.BringWindowToTop(hwnd)
-            win32gui.SetActiveWindow(hwnd)
-            pyautogui.hotkey('win', 'down')
-            # pyautogui.press('win')
-            # time.sleep(0.25)
-            # pyautogui.press('down')
+        # if y < 0:
+        #     print('Max Window:',title)
+        #     win32gui.BringWindowToTop(hwnd)
+        #     win32gui.SetActiveWindow(hwnd)
+        #     pyautogui.hotkey('win', 'down')
+        #     # pyautogui.press('win')
+        #     # time.sleep(0.25)
+        #     # pyautogui.press('down')
 
         # if (x+y) != 0 and (x+y) != -64000 and len(title) > 0:
         #     print(hwnd)
@@ -71,19 +73,26 @@ def move_window(hwnd, x, y, w, h):
     win32gui.MoveWindow(hwnd, x, y, w, h, True)
 
 
-def move_windows(wl):
-    for index,w in enumerate(wl):
+def move_windows():
+    global win_list
+    for index,w in enumerate(win_list):
         # time.sleep(0.1)
-        print('moving: ',index,w)
-        if index == 0 :
-            move_window(w['id'],0,0,monitors[0].width - 800, monitors[0].height)
-        else:
-            xindex = len(wl) - index
-            h = monitors[0].height//len(wl)
-            # h = monitors[0].height
-            # y = 100
-            y = h
-            move_window(wl[xindex]['id'],monitors[0].width - 800,(y*(index-1)),800,h)
+        try:
+            print('moving: ',index,w)
+            if index == 0 :
+                move_window(w['id'],0,0,monitors[0].width - 800, monitors[0].height)
+            else:
+                # xindex = len(wl) - index
+                # print(xindex)
+                h = monitors[0].height//len(win_list)
+                # h = monitors[0].height
+                # y = 100
+                y = h
+                move_window(w['id'],monitors[0].width - 800,(y*(index-1)),800,h)
+        except Exception as e:
+            print(e)
+            del( win_list[index])
+            move_windows()
     
 def setFocus(id):
     focused = False
@@ -111,24 +120,24 @@ def find_new_windows(wl):
     return wl
 
 
-def rotDown():
+def rotUp():
+    print('rotUp')
     global win_list
     win_list = find_new_windows(win_list)
-    # if event.event_type == keyboard.KEY_DOWN:
-    print('rotDown')
+    
     win_list = win_list[1:] + [win_list[0]]
-    move_windows(win_list)
+    move_windows()
 
     setFocus(win_list[0]['id'])
 
 
-def rotUp():
+def rotDown():
+    print('rotDown')
     global win_list
     win_list = find_new_windows(win_list)
-    # if event.event_type == keyboard.KEY_DOWN:
-    print('rotUp')
+    
     win_list = [win_list[-1]] + win_list[:-1]
-    move_windows(win_list)
+    move_windows()
 
     setFocus(win_list[0]['id'])
             
