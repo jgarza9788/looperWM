@@ -2,6 +2,8 @@ import time
 import win32gui
 import pyautogui
 import keyboard
+import win32con
+
 from screeninfo import get_monitors
 
 # Global variables
@@ -73,46 +75,93 @@ def move_window(hwnd, x, y, w, h):
     win32gui.MoveWindow(hwnd, x, y, w, h, True)
 
 
+# def move_windows():
+#     global win_list
+#     for index,w in enumerate(win_list):
+#         # time.sleep(0.1)
+#         try:
+#             print('moving: ',index,w)
+#             if index == 0 :
+#                 move_window(w['id'],0,0,monitors[0].width - 800, monitors[0].height)
+#             else:
+#                 # xindex = len(wl) - index
+#                 # print(xindex)
+#                 h = monitors[0].height//len(win_list)
+#                 # h = monitors[0].height
+#                 # y = 100
+#                 y = h
+#                 move_window(w['id'],monitors[0].width - 800,(y*(index-1)),800,h)
+#         except Exception as e:
+#             print(e)
+#             del( win_list[index])
+#             move_windows()
+    
+
+
+def is_fullscreen(x, y, w, h):
+    return x == 0 and y == 0 and w == monitors[0].width and h == monitors[0].height
+
 def move_windows():
     global win_list
-    for index,w in enumerate(win_list):
-        # time.sleep(0.1)
+    for index, w in enumerate(win_list):
         try:
-            print('moving: ',index,w)
+            if is_fullscreen(w['x'], w['y'], w['w'], w['h']):
+                print(f"Skipping full-screen window: {w['title']}")
+                continue
             if index == 0 :
                 move_window(w['id'],0,0,monitors[0].width - 800, monitors[0].height)
+                print(index, w['id'],w['title'],0,0,monitors[0].width - 800, monitors[0].height)
             else:
-                # xindex = len(wl) - index
-                # print(xindex)
                 h = monitors[0].height//len(win_list)
-                # h = monitors[0].height
-                # y = 100
                 y = h
                 move_window(w['id'],monitors[0].width - 800,(y*(index-1)),800,h)
+                print(index, w['id'],w['title'],monitors[0].width - 800,(y*(index-1)),800,h)
         except Exception as e:
             print(e)
-            del( win_list[index])
+            del(win_list[index])
             move_windows()
-    
-def setFocus(id):
+    print("-"*20)
+
+# def setFocus(id):
+#     focused = False
+#     error_count = 0 
+#     while focused == False:
+#         try:
+#             win32gui.SetForegroundWindow(win_list[0]['id'])
+#             focused = True
+#             print('errors',error_count)
+#         except:
+#             error_count += 1
+#             time.sleep(0.1)
+            
+def setFocus(hwnd):
     focused = False
     error_count = 0 
     while focused == False:
+        if error_count >= 2:
+            print(f'{error_count=}')
+            print('you were switching too fast')
+            break
         try:
-            win32gui.SetForegroundWindow(win_list[0]['id'])
+            win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+            win32gui.SetForegroundWindow(hwnd)
+            # win32gui.SetForegroundWindow(win_list[0]['id'])
             focused = True
-            print('errors',error_count)
+            # print('errors',error_count)
         except:
             error_count += 1
             time.sleep(0.1)
 
+
+
 def find_new_windows(wl):
     nwl = get_win_list()
 
-    wtitles = [w['title'] for w in wl]
+    wtitles = [w['id'] for w in wl]
 
     for w in nwl:
-        if w['title'] in wtitles:
+        if w['id'] in wtitles:
             pass # do nothing
         else:
             wl.insert(0,w)
